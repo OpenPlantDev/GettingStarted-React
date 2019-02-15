@@ -1,4 +1,4 @@
-import {IModelElement} from "../models/model";
+import {IElement} from "../models/element";
 
 
 export class ElementDataService {
@@ -7,7 +7,7 @@ export class ElementDataService {
 
     }
 
-    fetchElements(queryString: string): Promise<Array<IModelElement>>  {
+    fetchElements(queryString: string): Promise<Array<IElement>>  {
         let url = "http://localhost:3030/api/models/elements";
         if(queryString) {
             url = `${url}?${queryString}`;
@@ -20,7 +20,7 @@ export class ElementDataService {
                     throw new Error("Error reading data");
                 }
             }).then((result) => {
-                return result as Array<IModelElement>;
+                return result as Array<IElement>;
             }).catch((err) => {
                 console.log(`In fetchElements catch: ${err}`);
                 throw err;
@@ -29,7 +29,7 @@ export class ElementDataService {
 
    fetchComponents() {
        try {
-         return this.fetchElements("filter=elemType='component'");
+         return this.fetchElements("filter=elemType='component'&orderby=class,name");
        }
        catch(err) {
            throw err;
@@ -38,7 +38,7 @@ export class ElementDataService {
 
     fetchWbsItems() {
         try {
-            return this.fetchElements("filter=elemType='wbsitem'"); 
+            return this.fetchElements("filter=elemType='wbsitem'&orderby=class,name"); 
         }
           catch(err) {
               throw err;

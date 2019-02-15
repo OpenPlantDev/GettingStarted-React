@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { IModelElement } from '../models/model';
+import { IElement } from '../models/element';
 import {ElementListItem} from "./ElementListItem";
 
 interface IProps {
-    elements: Array<IModelElement>;
+    elements: Array<IElement>;
 }
 
 export const ElementList = (props: IProps)  => {

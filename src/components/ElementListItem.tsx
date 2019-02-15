@@ -1,12 +1,9 @@
 import * as React from 'react';
-import {IModelElement, isComponentProperties} from "../models/model";
-import {IComponent} from "../models/component";
-import {IWbsItem} from "../models/wbsItem";
-import { ComponentProperties } from './ComponentProperties';
-import { WbsItemProperties } from './WbsItemProperties';
+import {IElement} from "../models/element";
+import { ElementProperties } from './ElementProperties';
 
 interface IProps {
-    element: IModelElement;
+    element: IElement;
 }
 
 
@@ -20,13 +17,7 @@ export const ElementListItem = (props: IProps) => {
                 <li>id:{elem.id}</li>
                 <li>type: {elem.elemType}</li>
                 <li>class: {elem.class}</li>
-                {isComponentProperties(elem.properties) &&
-                    <ComponentProperties properties={elem.properties} />
-                }
-                {!isComponentProperties(elem.properties) &&
-                    <WbsItemProperties properties={elem.properties} />
-                }
-
+                <ElementProperties properties={elem.properties} />
             </ul>
         </div>
     );

@@ -4,13 +4,16 @@ import {  ElementDataService } from "./services/dataService";
 import { ElementList } from './components/ElementList';
 import {RefreshButton} from "./components/RefreshButton";
 import {AutoRefreshCheckBox} from "./components/AutoRefreshCheckbox";
-import { IComponent } from './models/component';
-import { IWbsItem } from './models/wbsItem';
+//import { IComponent } from './models/component';
+//import { IWbsItem } from './models/wbsItem';
+import { IElement } from './models/element';
+
+import * as socketio from 'socket.io-client';
 
 interface IState {
      autoRefresh: boolean;
-     components: Array<IComponent>;
-     wbsItems: Array<IWbsItem>;
+     components: Array<IElement>;
+     wbsItems: Array<IElement>;
      loading: boolean;
      err: Error | undefined;
 }
@@ -20,11 +23,13 @@ const intervalTime = 5000;
 export class App extends React.Component<any, IState> {
 
      elementDataService: ElementDataService;
+     socket: SocketIOClient.Socket;
      intervalId: number;
      state: IState;
      constructor(props: any) {
           super(props);
           this.elementDataService = new ElementDataService();
+          this.socket = socketio("http://localhost:3030");
           this.state = {autoRefresh: false, components: [], wbsItems: [], loading: true, err: undefined};
      }
 
@@ -58,12 +63,13 @@ export class App extends React.Component<any, IState> {
           let autoRefresh = !this.state.autoRefresh;
           console.log(`Turning AutoRefresh ${autoRefresh ? "ON" : "OFF"}`);
           if(autoRefresh) {
-               this.intervalId = setInterval(() => {
-                          this.refreshAll();
-                     }, intervalTime);
+               this.refreshAll();
+          //      this.intervalId = setInterval(() => {
+          //                 this.refreshAll();
+          //            }, intervalTime);
           
-          } else if(this.intervalId) {
-               clearInterval(this.intervalId);
+          // } else if(this.intervalId) {
+          //      clearInterval(this.intervalId);
           }
 
           this.setState({autoRefresh : autoRefresh});
@@ -98,7 +104,17 @@ export class App extends React.Component<any, IState> {
           }
      }
 
-     async componentWillMount() {
+     onDbUpdate = async (data: any) => {
+          if(this.state.autoRefresh) {
+               await this.refreshAll();
+          }
+     }
+
+     async componentDidMount() {
+          // setup socketio
+          this.socket.on("dbUpdated", (data: any) => this.onDbUpdate(data));
+
+
           try {
                let components = await this.elementDataService.fetchComponents();
                this.setState({components: components, loading: false, err: undefined});
@@ -110,10 +126,6 @@ export class App extends React.Component<any, IState> {
           }
      }
 
-     componentDidMount() {
-
-
-     }
 }
 
 

@@ -8,11 +8,8 @@ export const ElementProperties = (props: IProps) => {
     return (
         <div>
             {Object.keys(props.properties).map((key) => 
-                <li key={key}>{key}: {props.properties[key]}</li>
+                <li key={key}>{key}: {props.properties[key].toString()}</li>
             )}
         </div>
     );
 }
-
-//<li>desc: { props.properties.desc ? props.properties.desc : ""}</li>
-//<li>manufacturer: {props.properties.manufacturer ? props.properties.manufacturer : ""}</li>
